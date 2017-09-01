@@ -135,7 +135,7 @@ class Board extends React.Component {
 		
 	}
 
-	checkWin(sq) {
+	checkWinOLD(sq) {
 		// da rifare per la mappa a 4
 		//return [null, []]
 		
@@ -270,6 +270,86 @@ class Board extends React.Component {
 		}
 		
 		return [winner, wSet]
+	}
+
+	checkWin(sq) {
+
+		let dx = sq.length
+		let dy = sq[0].length
+		
+		let checkAll4Coords = function(sq, coordsSet) {
+
+			let c0 = checkSquareOwner(sq, coordsSet[0])
+			
+			if (c0 == null) {
+				return null
+			}
+
+			let c1 = checkSquareOwner(sq, coordsSet[1])
+			let c2 = checkSquareOwner(sq, coordsSet[2])
+			let c3 = checkSquareOwner(sq, coordsSet[3])
+
+			if (c0 == c1 && c1 == c2 && c2 == c3) {
+				return c0
+			}
+
+		}
+
+		let checkSquareOwner = function(sq, coords) {
+
+			let x = coords[0]
+			let y = coords[1]
+
+			if (x >= sq.length || x < 0) {
+				return null
+			}
+			if (y >= sq[0].length || y < 0) {
+				return null
+			}
+
+console.log("checking square owner :" + x + ", " + y + " to be " + sq[x][y])
+
+			return sq[x][y]
+		}
+
+		// verifica sulle righe
+		for (let y = 0; y < dy; y++) {
+			for (let x = 0; x < dx; x++) {
+				// check orizontal
+				let wSet = [ [x, y], [ x + 1, y], [x + 2, y], [x + 3, y] ]
+				let win = checkAll4Coords(sq, wSet)
+				if (win != null) {
+					return [win, wSet]
+				}
+				// check vertical
+				wSet = [ [x, y], [ x, y + 1], [x, y + 2], [x, y + 3] ]
+				win = checkAll4Coords(sq, wSet)
+				if (win != null) {
+					return [win, wSet]
+				}
+				// check diagonal right
+				wSet = [ [x, y], [ x + 1, y + 1], [x + 2, y + 2], [x + 3, y + 3] ]
+				win = checkAll4Coords(sq, wSet)
+				if (win != null) {
+					return [win, wSet]
+				}
+				// check diagonal left
+				wSet = [ [x, y], [ x - 1, y + 1], [x - 2, y + 2], [x - 3, y + 3] ]
+console.log("checkDiag")
+				win = checkAll4Coords(sq, wSet)
+				if (win != null) {
+					return [win, wSet]
+				}				
+
+
+			}
+		}
+
+		// no win found
+		return [ null, [] ] 
+
+
+
 	}
  
 	getStatus() {
